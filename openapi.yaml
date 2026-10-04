@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: Weather Prediction API
+  version: 1.0.0
+  description: Returns the next three daily high and low temperatures with actionable weather alerts. Uses OpenWeatherMap 5-day forecast data and bundled offline data when unavailable.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/weather:
+    get:
+      summary: Get a three-day city forecast
+      parameters:
+        - in: query
+          name: city
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 100 }
+          description: City name accepted by the configured OpenWeatherMap endpoint.
+        - in: query
+          name: offline
+          required: false
+          schema: { type: boolean, default: false }
+          description: Force the bundled offline sample data.
+      responses:
+        '200':
+          description: Forecast with per-day advice and HATEOAS links.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  city: { type: string }
+                  source: { type: string, enum: [offline, live-or-fallback] }
+                  forecast:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date: { type: string, format: date }
+                        highTemperature: { type: number, description: Celsius }
+                        lowTemperature: { type: number, description: Celsius }
+                        predictions: { type: array, items: { type: string } }
+                        timeWindow: { type: string }
+                  _links: { type: object }
+        '400': { description: Missing or invalid city parameter. }
+        '503': { description: Provider unavailable and bundled fallback failed. }

@@ -1,0 +1,29 @@
+[
+  {
+    "date": "2026-10-03",
+    "highTemperature": 25,
+    "lowTemperature": 17,
+    "rain": true,
+    "windSpeed": 8,
+    "thunderstorm": false,
+    "timeWindow": "09:00 - 12:00"
+  },
+  {
+    "date": "2026-10-04",
+    "highTemperature": 42,
+    "lowTemperature": 28,
+    "rain": false,
+    "windSpeed": 12,
+    "thunderstorm": false,
+    "timeWindow": "12:00 - 15:00"
+  },
+  {
+    "date": "2026-10-05",
+    "highTemperature": 29,
+    "lowTemperature": 20,
+    "rain": false,
+    "windSpeed": 15,
+    "thunderstorm": true,
+    "timeWindow": "15:00 - 18:00"
+  }
+]
