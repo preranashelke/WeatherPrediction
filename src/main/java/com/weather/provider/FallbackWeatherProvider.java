@@ -20,7 +20,10 @@ public class FallbackWeatherProvider implements WeatherProvider {
             return offlineProvider.getForecast(city);
         }
 
-        try { return onlineProvider.getForecast(city); }
-        catch (RuntimeException exception) { return offlineProvider.getForecast(city); }
+        try {
+            return onlineProvider.getForecast(city);
+        } catch (RuntimeException exception) {
+            return offlineProvider.getForecast(city);
+        }
     }
 }

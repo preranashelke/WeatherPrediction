@@ -1,43 +1,83 @@
 const form = document.querySelector('#weather-form');
-const result = document.querySelector('#result');
-const status = document.querySelector('#status');
+const cityInput = document.querySelector('#city');
+const offlineCheckbox = document.querySelector('#offline');
+const statusMessage = document.querySelector('#status');
+const resultArea = document.querySelector('#result');
 
-form.addEventListener('submit', async event => {
+form.addEventListener('submit', async function (event) {
   event.preventDefault();
-  const city = document.querySelector('#city').value.trim();
-  const offline = document.querySelector('#offline').checked;
-  status.textContent = 'Loading forecast…';
-  result.replaceChildren();
+
+  const city = cityInput.value.trim();
+  const useOfflineSample = offlineCheckbox.checked;
+
+  statusMessage.textContent = 'Loading forecast...';
+  resultArea.replaceChildren();
+
   try {
-    const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}&offline=${offline}`, {
+    const url = `/api/weather?city=${encodeURIComponent(city)}&offline=${useOfflineSample}`;
+    const response = await fetch(url, {
       headers: { Accept: 'application/json' }
     });
-    if (!response.ok) throw new Error(response.status === 400 ? 'Enter a city name up to 100 characters.' : 'Forecast unavailable. Try offline mode.');
-    renderWeather(await response.json());
-    status.textContent = '';
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        throw new Error('Please enter a valid city name (up to 100 characters).');
+      }
+      throw new Error('The forecast is unavailable. Try the offline sample.');
+    }
+
+    const weather = await response.json();
+    showForecast(weather);
+    statusMessage.textContent = '';
   } catch (error) {
-    status.textContent = error.message || 'Unable to reach the service.';
+    statusMessage.textContent = error.message || 'Could not connect to the weather service.';
   }
 });
 
-function renderWeather(data) {
+function showForecast(weather) {
   const heading = document.createElement('h2');
-  heading.textContent = `${data.city} · next 3 days`;
+  heading.textContent = `${weather.city} - next 3 days`;
+
   const source = document.createElement('p');
   source.className = 'source';
-  source.textContent = `Forecast source: ${data.source}`;
+  source.textContent = `Forecast source: ${weather.source}`;
+
   const table = document.createElement('table');
-  table.innerHTML = '<thead><tr><th>Date</th><th>High</th><th>Low</th><th>Prediction</th><th>Time window</th></tr></thead>';
-  const body = document.createElement('tbody');
-  data.forecast.forEach(day => {
+  const tableHead = document.createElement('thead');
+  const headingRow = document.createElement('tr');
+  const columnNames = ['Date', 'High', 'Low', 'Advice', 'Time window'];
+
+  columnNames.forEach(function (name) {
+    const headingCell = document.createElement('th');
+    headingCell.textContent = name;
+    headingRow.append(headingCell);
+  });
+
+  tableHead.append(headingRow);
+  table.append(tableHead);
+
+  const tableBody = document.createElement('tbody');
+  weather.forecast.forEach(function (day) {
     const row = document.createElement('tr');
-    [day.date, `${day.highTemperature}°C`, `${day.lowTemperature}°C`, day.predictions?.join(' · ') || 'No alerts', day.timeWindow].forEach(value => {
+    const predictions = day.predictions || [];
+    const advice = predictions.length > 0 ? predictions.join(' · ') : 'No alerts';
+    const values = [
+      day.date,
+      `${day.highTemperature}°C`,
+      `${day.lowTemperature}°C`,
+      advice,
+      day.timeWindow
+    ];
+
+    values.forEach(function (value) {
       const cell = document.createElement('td');
       cell.textContent = value;
       row.append(cell);
     });
-    body.append(row);
+
+    tableBody.append(row);
   });
-  table.append(body);
-  result.replaceChildren(heading, source, table);
+
+  table.append(tableBody);
+  resultArea.replaceChildren(heading, source, table);
 }

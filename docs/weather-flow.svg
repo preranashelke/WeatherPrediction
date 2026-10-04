@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" role="img" aria-labelledby="title description">
+  <title id="title">Weather forecast request flow</title>
+  <desc id="description">A browser or Postman request flows through the controller, weather service, and fallback provider. The provider uses OpenWeather or bundled offline data. The service applies weather rules before returning the forecast.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#475569" /></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #172554; }
+      .box { stroke-width: 2; }
+      .label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .detail { font-size: 15px; text-anchor: middle; }
+      .arrow { fill: none; stroke: #475569; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1100" height="560" rx="16" fill="#f8fafc" />
+  <text x="550" y="40" font-size="24" font-weight="700" text-anchor="middle">Weather forecast request flow</text>
+  <rect class="box" x="40" y="220" width="180" height="90" rx="14" fill="#dcfce7" stroke="#65a30d" />
+  <text class="label" x="130" y="254">Browser UI / Postman</text><text class="detail" x="130" y="282">city + offline toggle</text>
+  <rect class="box" x="300" y="220" width="180" height="90" rx="14" fill="#dbeafe" stroke="#2563eb" />
+  <text class="label" x="390" y="254">WeatherController</text><text class="detail" x="390" y="282">GET /api/weather</text>
+  <rect class="box" x="560" y="220" width="190" height="90" rx="14" fill="#fef3c7" stroke="#d97706" />
+  <text class="label" x="655" y="254">WeatherService</text><text class="detail" x="655" y="282">aggregate + apply rules</text>
+  <rect class="box" x="820" y="220" width="220" height="90" rx="14" fill="#fee2e2" stroke="#dc2626" />
+  <text class="label" x="930" y="254">FallbackWeatherProvider</text><text class="detail" x="930" y="282">choose live or offline data</text>
+  <path class="arrow" d="M220 265 H292" /><path class="arrow" d="M480 265 H552" /><path class="arrow" d="M750 265 H812" />
+  <rect class="box" x="820" y="75" width="220" height="75" rx="14" fill="#ffffff" stroke="#64748b" />
+  <text class="label" x="930" y="106">OpenWeatherMap</text><text class="detail" x="930" y="131">forecast API</text>
+  <path class="arrow" d="M930 220 V158" />
+  <rect class="box" x="820" y="395" width="220" height="75" rx="14" fill="#ffffff" stroke="#64748b" />
+  <text class="label" x="930" y="426">Bundled offline data</text><text class="detail" x="930" y="451">offlineData.json</text>
+  <path class="arrow" d="M930 310 V387" />
+  <rect class="box" x="545" y="395" width="220" height="75" rx="14" fill="#ffffff" stroke="#64748b" />
+  <text class="label" x="655" y="426">Weather rules</text><text class="detail" x="655" y="451">rain · heat · wind · storm</text>
+  <path class="arrow" d="M655 310 V387" />
+  <text x="550" y="525" font-size="14" fill="#475569" text-anchor="middle">The service returns the three-day forecast and any matching advice to the caller.</text>
+</svg>

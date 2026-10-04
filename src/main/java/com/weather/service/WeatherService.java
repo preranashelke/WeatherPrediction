@@ -27,16 +27,19 @@ public class WeatherService {
         List<DailyForecast> forecast = data.stream()
                 .map(this::buildForecast)
                 .toList();
+
         return new WeatherResponse(city, offline ? "offline" : "live-or-fallback", forecast,
                 new WeatherResponse.Links(new WeatherResponse.Link("/api/weather?city=" + URLEncoder.encode(city, StandardCharsets.UTF_8)),
                         new WeatherResponse.Link("/v3/api-docs")));
     }
 
     private DailyForecast buildForecast(WeatherData weather) {
+
         List<String> predictions = rules.stream()
                 .map(rule -> rule.evaluate(weather))
                 .flatMap(Optional::stream)
                 .toList();
+
         return new DailyForecast(weather.getDate(), weather.getHighTemperature(), weather.getLowTemperature(), predictions, weather.getTimeWindow());
     }
 }

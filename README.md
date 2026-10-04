@@ -1,6 +1,6 @@
 # Weather Prediction
 
-A Spring Boot microservice that returns three days of city forecast highs/lows, forecast windows, and weather advice.
+Application that returns three days of city forecast highs/lows, forecast windows, and weather advice.
 
 ## Run locally
 
@@ -14,7 +14,7 @@ Open [http://localhost:8080](http://localhost:8080). Set `OPENWEATHER_API_KEY` i
 
 `GET /api/weather?city={city}&offline={true|false}` returns a JSON forecast. Every day includes a date, Celsius high/low, prediction messages, and time window.
 
-Swagger UI is available at `/swagger-ui/index.html`; machine-readable schema is at `/v3/api-docs`. The checked-in contract is [openapi.yaml](openapi.yaml).
+Swagger UI is available at `/swagger-ui/index.html`.
 
 | Status | Meaning |
 | --- | --- |
@@ -40,10 +40,11 @@ docker build -t weather-prediction:local .
 docker run --rm -p 8080:8080 -e OPENWEATHER_API_KEY="$OPENWEATHER_API_KEY" weather-prediction:local
 ```
 
-`Jenkinsfile` contains build/test, image build, and local run stages. Configure Jenkins tools named `jdk17` and `maven`; store the API key as a masked Jenkins credential named `OPENWEATHER_API_KEY`. The Jenkins deployment stage maps the container to host port 8081 so it can run alongside Jenkins' default port 8080.
+`Jenkinsfile` contains build/test, image build, and local run stages.
 
-`mvn verify` runs the Spring context smoke test and rule tests for exact threshold boundaries and each advice message.
+`mvn verify` runs rule tests for exact threshold boundaries and each advice message.
 
 ## Request flow
 
-The draw.io diagram is in [docs/weather-flow.drawio](docs/weather-flow.drawio).
+![Weather forecast request flow](docs/weather-flow.svg)
+

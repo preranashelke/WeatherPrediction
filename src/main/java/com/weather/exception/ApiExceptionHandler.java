@@ -12,8 +12,7 @@ import java.util.Map;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, String>> handleMissingParameter(
-            MissingServletRequestParameterException exception) {
+    public ResponseEntity<Map<String, String>> handleMissingParameter(MissingServletRequestParameterException exception) {
         return ResponseEntity.badRequest().body(Map.of(
                 "error", "INVALID_REQUEST",
                 "message", "Required query parameter is missing."));

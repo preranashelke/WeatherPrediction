@@ -18,8 +18,10 @@ public class OfflineWeatherProvider {
 
     public List<WeatherData> getForecast(String city) {
         try (var input = new ClassPathResource("offlineData.json").getInputStream()) {
+
             var root = objectMapper.readTree(input);
             List<WeatherData> result = new ArrayList<>();
+
             for (var item : root) {
                 result.add(new WeatherData(LocalDate.parse(item.path("date").asText()),
                         item.path("highTemperature").asDouble(), item.path("lowTemperature").asDouble(),
