@@ -35,19 +35,19 @@ public class OpenWeatherProvider {
     @Value("${weather.api.key:}")
     private String apiKey;
 
-    public List<WeatherData> getForecast(String city) {
+    public List<WeatherData> getForecast(String city, int days) {
         if (apiKey.isBlank()) {
             throw new IllegalStateException("Weather API key is not configured");
         }
 
         try {
-            HttpResponse<String> response = httpClient.send(buildRequest(city), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(buildRequest(city, days), HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
                 throw new IllegalStateException("Weather provider returned HTTP " + response.statusCode());
             }
 
-            return parseForecast(response.body());
+            return parseForecast(response.body(), days);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Weather provider request interrupted", exception);
@@ -56,10 +56,10 @@ public class OpenWeatherProvider {
         }
     }
 
-    private HttpRequest buildRequest(String city) {
+    private HttpRequest buildRequest(String city, int days) {
         String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
         String encodedKey = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
-        String url = apiUrl + "?q=" + encodedCity + "&appid=" + encodedKey + "&cnt=24&units=metric";
+        String url = apiUrl + "?q=" + encodedCity + "&appid=" + encodedKey + "&cnt=" + (days * 8) + "&units=metric";
 
         return HttpRequest.newBuilder(URI.create(url))
                 .timeout(Duration.ofSeconds(4))
@@ -67,7 +67,7 @@ public class OpenWeatherProvider {
                 .build();
     }
 
-    private List<WeatherData> parseForecast(String responseBody) throws Exception {
+    private List<WeatherData> parseForecast(String responseBody, int days) throws Exception {
         JsonNode forecastItems = objectMapper.readTree(responseBody).path("list");
         if (!forecastItems.isArray()) {
             throw new IllegalStateException("Weather provider response is invalid");
@@ -77,7 +77,7 @@ public class OpenWeatherProvider {
         List<WeatherData> forecast = new ArrayList<>();
 
         for (Map.Entry<LocalDate, List<JsonNode>> day : itemsByDate.entrySet()) {
-            if (forecast.size() == 3) {
+            if (forecast.size() == days) {
                 break;
             }
             forecast.add(toWeatherData(day.getKey(), day.getValue()));

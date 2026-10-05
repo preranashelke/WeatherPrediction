@@ -21,15 +21,16 @@ public class WeatherService {
         this.rules = rules;
     }
 
-    public WeatherResponse getWeather(String city, boolean offline) {
-        List<WeatherData> data = weatherProvider.getForecast(city, offline);
+    public WeatherResponse getWeather(String city, boolean offline, int days) {
+        List<WeatherData> data = weatherProvider.getForecast(city, offline, days);
 
         List<DailyForecast> forecast = data.stream()
                 .map(this::buildForecast)
                 .toList();
 
         return new WeatherResponse(city, offline ? "offline" : "live-or-fallback", forecast,
-                new WeatherResponse.Links(new WeatherResponse.Link("/api/weather?city=" + URLEncoder.encode(city, StandardCharsets.UTF_8)),
+                new WeatherResponse.Links(new WeatherResponse.Link("/api/weather?city=" + URLEncoder.encode(city, StandardCharsets.UTF_8)
+                                + "&days=" + days + "&offline=" + offline),
                         new WeatherResponse.Link("/v3/api-docs")));
     }
 

@@ -1,18 +1,18 @@
 # Weather Prediction
 
-Application that returns three days of city forecast highs/lows, forecast windows, and weather advice.
+Application that returns next selected days of city forecast highs/lows, forecast windows, and weather advice.
 
 ## Run locally
 
 ```bash
-./mvnw spring-boot:run
+./mvnw compile spring-boot:run
 ```
 
-Open [http://localhost:8080](http://localhost:8080). Set `OPENWEATHER_API_KEY` in the environment to enable live data.
+Maven builds the React frontend and packages it into the Spring Boot app. Open [http://localhost:8080](http://localhost:8080). Set `OPENWEATHER_API_KEY` in the environment to enable live data.
 
 ## API
 
-`GET /api/weather?city={city}&offline={true|false}` returns a JSON forecast. Every day includes a date, Celsius high/low, prediction messages, and time window.
+`GET /api/weather?city={city}&days={1..5}&offline={true|false}` returns a JSON forecast. `days` defaults to 3. Every day includes a date, Celsius high/low, prediction messages, and time window.
 
 Swagger UI is available at `/swagger-ui/index.html`.
 
@@ -42,9 +42,10 @@ docker run --rm -p 8080:8080 -e OPENWEATHER_API_KEY="$OPENWEATHER_API_KEY" weath
 
 `Jenkinsfile` contains build/test, image build, and local run stages.
 
+The React source is in `frontend/`. Maven downloads the configured Node.js runtime, installs the frontend dependencies, builds the static React assets, and packages them in the executable JAR. Jenkins runs the same Maven build before building the Docker image.
+
 `mvn verify` runs rule tests for exact threshold boundaries and each advice message.
 
 ## Request flow
 
 ![Weather forecast request flow](docs/weather-flow.svg)
-

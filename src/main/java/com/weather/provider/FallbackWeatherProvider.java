@@ -15,15 +15,15 @@ public class FallbackWeatherProvider implements WeatherProvider {
     }
 
     @Override
-    public List<WeatherData> getForecast(String city, boolean offline) {
+    public List<WeatherData> getForecast(String city, boolean offline, int days) {
         if (offline) {
-            return offlineProvider.getForecast(city);
+            return offlineProvider.getForecast(city, days);
         }
 
         try {
-            return onlineProvider.getForecast(city);
+            return onlineProvider.getForecast(city, days);
         } catch (RuntimeException exception) {
-            return offlineProvider.getForecast(city);
+            return offlineProvider.getForecast(city, days);
         }
     }
 }

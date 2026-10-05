@@ -19,12 +19,14 @@ public class WeatherController {
     }
 
     @GetMapping
-    public ResponseEntity<WeatherResponse> getWeather(@RequestParam String city, @RequestParam(defaultValue = "false") boolean offline) {
+    public ResponseEntity<WeatherResponse> getWeather(@RequestParam String city,
+            @RequestParam(defaultValue = "false") boolean offline,
+            @RequestParam(defaultValue = "3") int days) {
 
-        if (city == null || city.isBlank() || city.length() > 100) {
+        if (city == null || city.isBlank() || city.length() > 100 || days < 1 || days > 5) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(weatherService.getWeather(city.trim(), offline));
+        return ResponseEntity.ok(weatherService.getWeather(city.trim(), offline, days));
     }
 
 }

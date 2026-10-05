@@ -17,13 +17,20 @@ public class OfflineWeatherProvider {
     public OfflineWeatherProvider() { this.objectMapper = new ObjectMapper(); }
 
     public List<WeatherData> getForecast(String city) {
+        return getForecast(city, 3);
+    }
+
+    public List<WeatherData> getForecast(String city, int days) {
         try (var input = new ClassPathResource("offlineData.json").getInputStream()) {
 
             var root = objectMapper.readTree(input);
             List<WeatherData> result = new ArrayList<>();
 
             for (var item : root) {
-                result.add(new WeatherData(LocalDate.parse(item.path("date").asText()),
+                if (result.size() == days) {
+                    break;
+                }
+                result.add(new WeatherData(LocalDate.now().plusDays(result.size()),
                         item.path("highTemperature").asDouble(), item.path("lowTemperature").asDouble(),
                         item.path("rain").asBoolean(), item.path("windSpeed").asDouble(),
                         item.path("thunderstorm").asBoolean(), item.path("timeWindow").asText()));
